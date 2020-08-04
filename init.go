@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Carrotxyy/syncSense/common/api"
 	"github.com/Carrotxyy/syncSense/common/db"
 	"github.com/Carrotxyy/syncSense/common/setting"
 	"github.com/Carrotxyy/syncSense/work"
@@ -26,8 +27,14 @@ func main() {
 
 	init,_ := Create(wxConfig)
 
-
-	init.Work.OrginfoUpload()
+	// 同步Org_SenseMark = "1" 的新增数据
+	init.Work.AddOrginfoUpload()
+	// 同步Org_SenseMark = "2" 的修改数据
+	init.Work.UpdateOrginfoUpload()
+	// 同步Org_SenseMark = "2" 且 Org_SenseID = "" 特殊情况
+	init.Work.OtherOrginfoUpload()
+	// 同步Org_SenseMark = "3" 的删除数据
+	init.Work.DeleteOrginfoUpload()
 }
 
 
@@ -48,6 +55,7 @@ func Create(config setting.Config)(*Init,error){
 		&inject.Object{Value: &init},
 		&inject.Object{Value: &conn},
 		&inject.Object{Value: &config},
+		&inject.Object{Value: &api.Api{}},
 	); err != nil {
 		log.Fatal("inject fatal: ", err)
 	}
