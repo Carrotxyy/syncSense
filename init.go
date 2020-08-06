@@ -1,4 +1,4 @@
-package syncSense
+package main
 
 import (
 	"fmt"
@@ -13,30 +13,37 @@ import (
 type Init struct {
 	Work *work.Work `inject:""`
 }
-//
-//func main() {
-//	wxConfig := setting.Config{}
-//	wxConfig.WxAddr = "http://xyz.szlimaiyun.cn"
-//	wxConfig.DbType = "mysql"
-//	wxConfig.DbUser = "root"
-//	wxConfig.DbPassword = "123456"
-//	wxConfig.DbIP = "127.0.0.1"
-//	wxConfig.DbName = "gin-vue"
-//	wxConfig.TablePrefix = "go_"
-//
-//
-//	init,_ := Create(wxConfig)
-//
-//	// 同步Org_SenseMark = "1" 的新增数据
-//	init.Work.AddOrginfoUpload()
-//	// 同步Org_SenseMark = "2" 的修改数据
-//	init.Work.UpdateOrginfoUpload()
-//	// 同步Org_SenseMark = "2" 且 Org_SenseID = "" 特殊情况
-//	init.Work.OtherOrginfoUpload()
-//	// 同步Org_SenseMark = "3" 的删除数据
-//	init.Work.DeleteOrginfoUpload()
-//}
-//
+
+func main() {
+	senseConfig := setting.Config{}
+	senseConfig.WxAddr = "http://xyz.szlimaiyun.cn"
+	senseConfig.DbType = "mysql"
+	senseConfig.DbUser = "root"
+	senseConfig.DbPassword = "123456"
+	senseConfig.DbIP = "127.0.0.1"
+	senseConfig.DbName = "gin-vue"
+	senseConfig.TablePrefix = "go_"
+
+
+	init,_ := Create(senseConfig)
+
+	// 同步Org_SenseMark = "1" 的新增数据
+	init.Work.AddOrginfoUpload()
+	// 同步Org_SenseMark = "2" 的修改数据
+	init.Work.UpdateOrginfoUpload()
+	// 同步Org_SenseMark = "2" 且 Org_SenseID = "" 特殊情况
+	init.Work.OtherOrginfoUpload()
+	// 同步Org_SenseMark = "3" 的删除数据
+	init.Work.DeleteOrginfoUpload()
+
+	// 同步Per_SenseMark = "1" 的新增数据
+	init.Work.AddPersonUpload()
+	// 同步Per_SenseMark = "2" 的修改数据
+	init.Work.UpdatePersonUpload()
+	// 同步Per_SenseMark = "3" 的删除数据
+	init.Work.DeletePersonUpload()
+}
+
 
 func (init *Init)RunWork(){
 

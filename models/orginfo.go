@@ -21,4 +21,5 @@ type Orginfo struct {
 	Org_SenseID        string `gorm:"column:Org_SenseID" json:"Org_SenseID"`                                     //商汤系统机构ID，0非商汤用户，9999初创
 	Org_MegID          string `gorm:"column:Org_MegID" json:"Org_MegID"`                                         //旷视系统机构ID，0非旷视用户，9999初创
 	Org_SenseMark      string `gorm:"column:Org_SenseMark" json:"Org_SenseMark"`                                 //同步商汤系统标志位 0：已同步 1：新增 2：修改 3：删除
+
 }

@@ -30,11 +30,12 @@ func (b *BaseRepository) Get_Not(not, out interface{}, sel string) (error, int) 
 /**
 	根据条件获取表数据
 
-	@where 查询条件
-	@out   装载条件
-	@sel   查询字段
+	@where 		查询条件
+	@out   		装载条件
+	@sel   		查询字段
+	@otherSql 	其他查询条件 sql表达式
 
-	返回参数 (错误，数据数量)
+	返回参数 		(错误，数据数量)
  */
 func (b *BaseRepository) Get(where,out interface{},sel string,otherSql string)(error,int){
 	var count int
@@ -52,8 +53,40 @@ func (b *BaseRepository) Get(where,out interface{},sel string,otherSql string)(e
 	return err, count
 }
 
+/**
+	关联查询
 
-//
+	@where 		查询条件
+	@out		装载数据
+	@refer		需要填充的字段切片
+	@sel   		查询字段
+	@otherSql 	其他查询条件 sql表达式
+
+	返回参数 (错误，数据数量)
+ */
+func (b *BaseRepository) GetReferBelongsTo(where,out interface{},refer []string,sel,otherSql string)(error,int){
+	var count int
+
+	db := b.DB.Conn.Where(where)
+	if otherSql != ""{
+		// 其他条件
+		db = db.Where(otherSql)
+	}
+	if sel != "" {
+		// 检索的字段
+		db = db.Select(sel)
+	}
+
+	// 填充字段
+	for _, field := range refer {
+		db = db.Preload(field)
+	}
+
+	err := db.Find(out).Count(&count).Error
+
+	return err,count
+}
+
 /**
 	更新数据
 

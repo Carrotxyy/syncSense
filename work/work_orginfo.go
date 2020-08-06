@@ -149,10 +149,17 @@ func (w *Work)AddOrginfoController(orginfos []*models.Orginfo)error{
 	var ids []int
 	// 更新 Org_SenseID
 	for _, item := range res.Orginfos {
-		ids = append(ids,item.Org_ID)
-		err = w.Repository.Update(models.Orginfo{},&models.Orginfo{Org_ID: item.Org_ID},&models.Orginfo{Org_SenseID: item.Org_SenseID})
+		// 更新条件
+		where := &models.Orginfo{Org_ID: item.Org_ID}
+		// 更新内容
+		newObj := &models.Orginfo{Org_SenseID: item.Org_SenseID}
+		err = w.Repository.Update(models.Orginfo{},where,newObj)
+
 		if err != nil {
 			fmt.Println("更新机构 sense ID 错误：",err)
+		}else{
+			// 只有更新成功的才能恢复标志位
+			ids = append(ids,item.Org_ID)
 		}
 	}
 	//上传成功后，要将标志位恢复成 "0" 已同步状态
