@@ -27,21 +27,28 @@ func main() {
 
 	init,_ := Create(senseConfig)
 
-	// 同步Org_SenseMark = "1" 的新增数据
-	init.Work.AddOrginfoUpload()
-	// 同步Org_SenseMark = "2" 的修改数据
-	init.Work.UpdateOrginfoUpload()
-	// 同步Org_SenseMark = "2" 且 Org_SenseID = "" 特殊情况
-	init.Work.OtherOrginfoUpload()
-	// 同步Org_SenseMark = "3" 的删除数据
-	init.Work.DeleteOrginfoUpload()
+	// 机构同步
+	//// 同步Org_SenseMark = "1" 的新增数据
+	//init.Work.AddOrginfoUpload()
+	//// 同步Org_SenseMark = "2" 的修改数据
+	//init.Work.UpdateOrginfoUpload()
+	//// 同步Org_SenseMark = "2" 且 Org_SenseID = "" 特殊情况
+	//init.Work.OtherOrginfoUpload()
+	//// 同步Org_SenseMark = "3" 的删除数据
+	//init.Work.DeleteOrginfoUpload()
 
-	// 同步Per_SenseMark = "1" 的新增数据
-	init.Work.AddPersonUpload()
-	// 同步Per_SenseMark = "2" 的修改数据
-	init.Work.UpdatePersonUpload()
-	// 同步Per_SenseMark = "3" 的删除数据
-	init.Work.DeletePersonUpload()
+	// 人员同步
+	//// 同步Per_SenseMark = "1" 的新增数据
+	//init.Work.AddPersonUpload()
+	//// 同步Per_SenseMark = "2" 的修改数据
+	//init.Work.UpdatePersonUpload()
+	//// 同步Per_SenseMark = "2" 且 Per_SensePerID = "" 特殊情况
+	//init.Work.OtherPersonUpload()
+ 	//// 同步Per_SenseMark = "3" 的删除数据
+	//init.Work.DeletePersonUpload()
+
+	// 访客同步
+	init.Work.AddVisitorUpload()
 }
 
 

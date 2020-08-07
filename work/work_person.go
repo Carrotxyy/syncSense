@@ -94,7 +94,7 @@ func (w *Work) UpdatePersonUpload() {
 		Per_SenseMark: "2", // 修改操作
 	}
 	// 获取数据
-	err, count := w.Repository.Get(where, &persons, "", " trim(Per_SensePerID)!='' ")
+	err, count := w.Repository.GetReferBelongsTo(where, &persons, []string{"Per_OrgRefe"}, ""," trim(Per_SensePerID)!='' ")
 	if err != nil {
 		fmt.Println("获取 修改人员 数据错误!", err)
 		return
@@ -192,4 +192,36 @@ func (w *Work) DeletePersonController(persons []*models.Personinfo) error {
 	}
 
 	return nil
+}
+
+/**
+
+有时候，当管理员新建一个人员后，在同步程序没有执行之前，
+修改了人员的数据，导致标志位Per_SenseMark="2",但是这个人员又不存在Per_SensePerID
+所以会导致这个机构无法同步到商汤系统中，
+
+所以，这里要找出Per_SenseMark="2",但没有 Per_SensePerID的数据，调用添加人员的方法
+ */
+
+func (w *Work) OtherPersonUpload(){
+	var persons []*models.Personinfo
+
+	where := models.Personinfo{
+		Per_SenseMark: "2",
+		Per_Status: "1" ,
+	}
+
+	err, count := w.Repository.GetReferBelongsTo(where, &persons, []string{"Per_OrgRefer"}, "", " trim(Per_SensePerID)='' ")
+
+	if err != nil {
+		fmt.Println("特殊人员情况，获取数据库数据错误:",err)
+		return
+	}
+
+	if count <= 0 {
+		fmt.Println("特殊人员情况，暂无数据")
+		return
+	}
+
+	w.AddPersonController(persons)
 }

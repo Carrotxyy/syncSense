@@ -111,3 +111,27 @@ func (b *BaseRepository) Update(model,where, newData interface{}) error {
 func (b *BaseRepository) UpdateMark(model interface{} , field string , fieldValue interface{} , value interface{})error{
 	return b.DB.Conn.Model(model).Where(field + " IN (?)",fieldValue).Updates(value).Error
 }
+
+/**
+	获取需要上传的访客数据,独立方法,因为要求较多，无法集中优化
+
+	SELECT * FROM
+	(SELECT * FROM go_visitor WHERE Vis_SenseMark='1' AND Vis_State='1') AS vis
+	INNER JOIN
+	(SELECT Per_ID,Per_Name,Per_SensePerID FROM go_personinfo WHERE Per_Status="1" AND Per_SensePerID IS NOT NULL   ) AS per
+	ON
+	vis.Vis_PerID = per.Per_ID
+
+ */
+func (b *BaseRepository) GetUploadVisitor(where , out interface{})(error,int){
+	var count int
+
+	db := b.DB.Conn.Where(where)
+
+	// 填充字段
+	db = db.Preload("Vis_PersonRefer","Per_Status = ? AND Per_AllowVisit = ?","1","0")
+
+	err := db.Find(out).Count(&count).Error
+
+	return err,count
+}
