@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/Carrotxyy/syncSense/common/db"
+import (
+	"github.com/Carrotxyy/syncSense/common/db"
+	"github.com/Carrotxyy/syncSense/models"
+)
 
 type BaseRepository struct {
 	DB *db.DB `inject:""`
@@ -58,7 +61,7 @@ func (b *BaseRepository) Get(where,out interface{},sel string,otherSql string)(e
 
 	@where 		查询条件
 	@out		装载数据
-	@refer		需要填充的字段切片
+	@refer		需要填充的字段
 	@sel   		查询字段
 	@otherSql 	其他查询条件 sql表达式
 
@@ -123,15 +126,47 @@ func (b *BaseRepository) UpdateMark(model interface{} , field string , fieldValu
 	vis.Vis_PerID = per.Per_ID
 
  */
-func (b *BaseRepository) GetUploadVisitor(where , out interface{})(error,int){
-	var count int
+func (b *BaseRepository) GetUploadVisitor()(error,[]*models.Visitor){
+	var out []*models.Visitor
+	var temporarys []*models.Temporary
 
-	db := b.DB.Conn.Where(where)
+	err := b.DB.Conn.Raw(`
+	SELECT * FROM
+	(SELECT * FROM go_visitor WHERE Vis_SenseMark='1' AND Vis_State='1')AS go_visitor
+	INNER JOIN
+	(SELECT Per_ID,Per_Name,Per_SensePerID FROM go_personinfo WHERE Per_Status="1" AND Per_SensePerID IS NOT NULL) AS go_personinfo
+	ON
+	go_visitor.Vis_PerID = go_personinfo.Per_ID`).Scan(&temporarys).Error
 
-	// 填充字段
-	db = db.Preload("Vis_PersonRefer","Per_Status = ? AND Per_AllowVisit = ?","1","0")
-
-	err := db.Find(out).Count(&count).Error
-
-	return err,count
+	for _, item := range temporarys {
+		visitor := models.Visitor{
+			item.Vis_ID,
+			item.Vis_Name,
+			item.Vis_Number,
+			item.Vis_UName,
+			item.Vis_UNumber,
+			item.Vis_IDType,
+			item.Vis_IDNum,
+			item.Vis_StartTime,
+			item.Vis_EndTime,
+			item.Vis_Message,
+			item.Vis_IsAcc,
+			item.Vis_State,
+			item.Vis_FileName,
+			item.Vis_PerID,
+			models.Personinfo{
+				Per_ID: item.Per_ID,
+				Per_Name: item.Per_Name,
+				Per_SensePerID: item.Per_SensePerID,
+			},
+			item.Vis_SenseVisID,
+			item.Vis_PeakVisID,
+			item.Vis_MegVisID,
+			item.Vis_SenseMark,
+			item.Vis_PeakMark,
+			item.Vis_MegMark,
+		}
+		out= append(out,&visitor)
+	}
+	return err,out
 }

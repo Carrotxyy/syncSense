@@ -1,7 +1,8 @@
 package models
 
 type Visitor struct {
-	Vis_Name        string     `gorm:"cloumn:Vis_Name"`                                    // 业主姓名
+	Vis_ID          int        `gorm:"primary_key;column:Vis_ID"`                          // 主键
+	Vis_Name        string     `gorm:"column:Vis_Name"`                                    // 业主姓名
 	Vis_Number      string     `gorm:"column:Vis_Number"`                                  // 业主电话
 	Vis_UName       string     `gorm:"column:Vis_UName"`                                   // 访客姓名
 	Vis_UNumber     string     `gorm:"column:Vis_UNumber"`                                 // 访客电话
@@ -21,4 +22,5 @@ type Visitor struct {
 	Vis_SenseMark   string     `gorm:"column:Vis_SenseMark"`                               // 同步商汤系统标志位
 	Vis_PeakMark    string     `gorm:"column:Vis_PeakMark"`                                // 同步披克系统标志位
 	Vis_MegMark     string     `gorm:"column:Vis_MegMark"`                                 // 同步旷视系统标志位
+
 }

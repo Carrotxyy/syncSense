@@ -18,7 +18,7 @@ func (w *Work) AddPersonUpload() {
 		Per_Status:    "1", // 有效数据
 	}
 	// 获取数据
-	err, count := w.Repository.GetReferBelongsTo(where, &persons, []string{"Per_OrgRefer"}, "", "")
+	err, count := w.Repository.GetReferBelongsTo(where, &persons, []string{"Per_OrgRefer"}, "", "`Per_Image` != \"\" ")
 	if err != nil {
 		fmt.Println("获取新增人员数据错误:", err)
 		return
@@ -94,7 +94,7 @@ func (w *Work) UpdatePersonUpload() {
 		Per_SenseMark: "2", // 修改操作
 	}
 	// 获取数据
-	err, count := w.Repository.GetReferBelongsTo(where, &persons, []string{"Per_OrgRefe"}, ""," trim(Per_SensePerID)!='' ")
+	err, count := w.Repository.GetReferBelongsTo(where, &persons, []string{"Per_OrgRefer"}, ""," trim(Per_SensePerID)!='' ")
 	if err != nil {
 		fmt.Println("获取 修改人员 数据错误!", err)
 		return
@@ -204,6 +204,7 @@ func (w *Work) DeletePersonController(persons []*models.Personinfo) error {
  */
 
 func (w *Work) OtherPersonUpload(){
+	fmt.Println("特殊情况同步开始")
 	var persons []*models.Personinfo
 
 	where := models.Personinfo{
